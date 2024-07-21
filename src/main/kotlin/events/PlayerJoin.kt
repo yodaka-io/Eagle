@@ -9,6 +9,6 @@ class PlayerJoin: Listener {
     @EventHandler
     fun playerJoin(event: PlayerJoinEvent) {
         val player: Player = event.player
-        event.joinMessage(Component.text("Hello ").append(player.displayName()).append(Component.text("!!!")))
+        event.joinMessage(Component.text("Hellooooo ").append(player.displayName()).append(Component.text("!!!")))
     }
 }
