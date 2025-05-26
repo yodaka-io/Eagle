@@ -1,7 +1,30 @@
-main: io.yodaka.eagle.EaglePlugin
 name: Eagle
-version: "1.0"
-api-version: "1.20"
+version: ${version}
+main: io.yodaka.eagle.EaglePlugin
+api-version: 1.21
 author: nedew
 description: Yodaka PvP plugin
 api: "エディタ上でapiプロパティが無いとエラーが出るので書いているが、実際には使用されない。"
+
+commands:
+  eagle:
+    description: Eagle main command
+    usage: /eagle <subcommand>
+    permission: eagle.admin
+  join:
+    description: Join the game
+    usage: /join
+  leave:
+    description: Leave the game
+    usage: /leave
+  team:
+    description: Team management
+    usage: /team <subcommand>
+
+permissions:
+  eagle.admin:
+    description: Eagle admin permissions
+    default: op
+  eagle.player:
+    description: Basic player permissions
+    default: "op"
