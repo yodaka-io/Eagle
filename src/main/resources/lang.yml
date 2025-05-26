@@ -1,0 +1,82 @@
+# Eagle Plugin Language File (Japanese)
+# 日本語言語ファイル
+
+# 一般メッセージ
+general:
+  plugin-enabled: "Eagleプラグインが有効になりました！"
+  plugin-disabled: "Eagleプラグインが無効になりました。"
+  no-permission: "&c権限がありません。"
+  player-only: "&cこのコマンドはプレイヤーのみ実行できます。"
+  unknown-command: "&c不明なコマンドです。"
+
+# ロビーメッセージ
+lobby:
+  welcome: "&aEagleサーバーへようこそ！"
+  waiting-players: "&e待機中... ({current}/{required}人)"
+  game-starting: "&aゲームが開始されます！"
+  countdown: "&e{time}秒後にゲーム開始..."
+  not-enough-players: "&c人数が足りません。最低{min}人必要です。"
+  lobby-full: "&cロビーが満員です。"
+
+# チームメッセージ
+team:
+  assigned: "&aあなたは{team}チームに配属されました！"
+  red-team: "&c赤チーム"
+  blue-team: "&9青チーム"
+  team-chat: "&8[チーム] &r{player}: {message}"
+  global-chat: "&8[全体] &r{player}: {message}"
+  team-full: "&c{team}チームは満員です。"
+
+# ゲームメッセージ
+game:
+  started: "&aゲーム開始！"
+  ended: "&eゲーム終了！"
+  time-remaining: "&e残り時間: {time}"
+  victory: "&a{team}チームの勝利！"
+  defeat: "&c{team}チームの敗北..."
+  draw: "&e引き分け！"
+  player-killed: "&c{killer}が{victim}を倒しました！"
+  player-assisted: "&e{assister}がアシスト！"
+
+# マップメッセージ
+map:
+  loading: "&eマップ「{map}」を読み込み中..."
+  loaded: "&aマップ「{map}」が読み込まれました！"
+  not-found: "&cマップ「{map}」が見つかりません。"
+  next-map: "&e次のマップ: {map}"
+
+# スコアメッセージ
+score:
+  kills: "キル"
+  deaths: "デス"
+  assists: "アシスト"
+  points: "ポイント"
+  kd-ratio: "K/D比"
+
+# エラーメッセージ
+error:
+  config-load: "&c設定ファイルの読み込みに失敗しました。"
+  map-load: "&cマップの読み込みに失敗しました: {map}"
+  database-error: "&cデータベースエラーが発生しました。"
+  unexpected-error: "&c予期しないエラーが発生しました。"
+
+# コマンドメッセージ
+commands:
+  help-header: "&8========== &cEagle コマンド &8=========="
+  help-footer: "&8=================================="
+  join-game: "&a/eagle join - ゲームに参加"
+  leave-game: "&c/eagle leave - ゲームから退出"
+  team-chat: "&e/tc <メッセージ> - チームチャット"
+  global-chat: "&f/gc <メッセージ> - 全体チャット"
+  stats: "&b/eagle stats - 統計を表示"
+
+# UI要素
+ui:
+  sidebar-title: "&c&lEAGLE PVP"
+  time-left: "&e時間: &f{time}"
+  red-score: "&c赤: &f{score}"
+  blue-score: "&9青: &f{score}"
+  your-stats: "&aあなたの成績:"
+  kills-display: "&eキル: &f{kills}"
+  deaths-display: "&cデス: &f{deaths}"
+  assists-display: "&bアシスト: &f{assists}"

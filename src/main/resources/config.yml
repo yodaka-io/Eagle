@@ -1,0 +1,81 @@
+# Eagle Plugin Configuration
+# チームPvPプラグインの設定ファイル
+
+# ロビー設定
+lobby:
+  # ゲーム開始に必要な最小プレイヤー数
+  min-players: 4
+  # ゲーム開始に必要な最大プレイヤー数
+  max-players: 16
+  # ゲーム開始までの待機時間（秒）
+  countdown-time: 10
+  # ロビーワールド名
+  world-name: "lobby"
+  # ロビーのスポーン地点
+  spawn-point:
+    x: 0.0
+    y: 64.0
+    z: 0.0
+    yaw: 0.0
+    pitch: 0.0
+
+# チーム設定
+teams:
+  red:
+    name: "Red Team"
+    color: "RED"
+    max-players: 8
+  blue:
+    name: "Blue Team"
+    color: "BLUE"
+    max-players: 8
+
+# マップローテーション設定
+maps:
+  # 使用するマップのリスト
+  rotation:
+    - "castle_wars"
+    - "bridge_battle"
+    - "capture_point"
+
+  # マップファイルのディレクトリ
+  maps-directory: "plugins/Eagle/maps"
+
+# ゲーム設定
+game:
+  # デフォルトの制限時間（秒）
+  default-time-limit: 1800
+  # ゲーム終了後の結果表示時間（秒）
+  result-display-time: 10
+  # 次のマップへの移行時間（秒）
+  map-transition-time: 5
+
+# スコア設定
+scoring:
+  # キルポイント
+  kill-points: 1
+  # アシストポイント
+  assist-points: 0.5
+  # 勝利ボーナス
+  win-bonus: 10
+
+# UI設定
+ui:
+  # サイドバーの更新間隔（tick）
+  sidebar-update-interval: 20
+  # ActionBarの更新間隔（tick）
+  actionbar-update-interval: 10
+
+# メッセージ設定
+messages:
+  # 使用する言語ファイル
+  language: "ja"
+  # プレフィックス
+  prefix: "&8[&cEagle&8] &r"
+
+# デバッグ設定
+debug:
+  # デバッグモードの有効/無効
+  enabled: false
+  # 詳細ログの出力
+  verbose-logging: false
