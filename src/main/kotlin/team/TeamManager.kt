@@ -19,10 +19,10 @@ class TeamManager(private val plugin: EaglePlugin) : Listener {
     }
     
     private fun createDefaultTeams() {
-        registerTeam(Team("red", "Red Team", NamedTextColor.RED))
-        registerTeam(Team("blue", "Blue Team", NamedTextColor.BLUE))
-        registerTeam(Team("green", "Green Team", NamedTextColor.GREEN))
-        registerTeam(Team("yellow", "Yellow Team", NamedTextColor.YELLOW))
+        registerTeam(Team("red", "Red Team", TeamColor.RED))
+        registerTeam(Team("blue", "Blue Team", TeamColor.BLUE))
+        registerTeam(Team("green", "Green Team", TeamColor.GREEN))
+        registerTeam(Team("yellow", "Yellow Team", TeamColor.YELLOW))
     }
     
     fun registerTeam(team: Team) {
