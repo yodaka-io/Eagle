@@ -7,7 +7,7 @@ import java.util.*
 data class Team(
     val id: String,
     val name: String,
-    val color: NamedTextColor,
+    val color: TeamColor,
     val maxSize: Int = 16
 ) {
     private val members = mutableSetOf<UUID>()
