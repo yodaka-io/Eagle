@@ -3,7 +3,7 @@
 
 # 一般メッセージ
 general:
-  plugin-enabled: "Eagleプラグインが有効になりました！"
+  plugin-enabled: "Eagleプラグインが有効になりました。"
   plugin-disabled: "Eagleプラグインが無効になりました。"
   no-permission: "&c権限がありません。"
   player-only: "&cこのコマンドはプレイヤーのみ実行できます。"
@@ -11,7 +11,7 @@ general:
 
 # ロビーメッセージ
 lobby:
-  welcome: "&aEagleサーバーへようこそ！"
+  welcome: "&aEagleサーバーへようこそ！！！！"
   waiting-players: "&e待機中... ({current}/{required}人)"
   game-starting: "&aゲームが開始されます！"
   countdown: "&e{time}秒後にゲーム開始..."

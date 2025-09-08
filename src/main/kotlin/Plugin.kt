@@ -53,7 +53,7 @@ class EaglePlugin : JavaPlugin() {
         // コマンドの登録
         registerCommands()
         
-        logger.info("Eagle プラグインが有効になりました！")
+        logger.info("Eagle プラグインが有効になりました。")
     }
     
     override fun onDisable() {
