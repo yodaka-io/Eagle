@@ -1,0 +1,50 @@
+id: capture_point
+name: Capture Point
+world-name: capture_point_game
+time-limit: 1800
+
+# 待機エリアの設定
+waiting-area:
+  x: 0.0
+  y: 90.0
+  z: 0.0
+  yaw: 0.0
+  pitch: -45.0
+
+# ゲーム境界の設定
+game-boundary:
+  min:
+    x: -40.0
+    y: 0.0
+    z: -40.0
+  max:
+    x: 40.0
+    y: 80.0
+    z: 40.0
+
+# チームスポーンポイント
+spawn-points:
+  red:
+    0:
+      x: 30.0
+      y: 64.0
+      z: 30.0
+      yaw: -135.0
+      pitch: 0.0
+  blue:
+    0:
+      x: -30.0
+      y: 64.0
+      z: -30.0
+      yaw: 45.0
+      pitch: 0.0
+
+# 勝利条件
+objectives:
+  0:
+    type: control_point
+    location:
+      x: 0.0
+      y: 64.0
+      z: 0.0
+    radius: 5.0

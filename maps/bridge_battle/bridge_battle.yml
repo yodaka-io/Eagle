@@ -1,0 +1,46 @@
+id: bridge_battle
+name: Bridge Battle
+world-name: bridge_battle_game
+time-limit: 1800
+
+# 待機エリアの設定
+waiting-area:
+  x: 0.0
+  y: 80.0
+  z: 100.0
+  yaw: 180.0
+  pitch: 0.0
+
+# ゲーム境界の設定
+game-boundary:
+  min:
+    x: -80.0
+    y: 0.0
+    z: -50.0
+  max:
+    x: 80.0
+    y: 80.0
+    z: 100.0
+
+# チームスポーンポイント
+spawn-points:
+  red:
+    0:
+      x: 50.0
+      y: 64.0
+      z: -30.0
+      yaw: 180.0
+      pitch: 0.0
+  blue:
+    0:
+      x: -50.0
+      y: 64.0
+      z: -30.0
+      yaw: 0.0
+      pitch: 0.0
+
+# 勝利条件
+objectives:
+  0:
+    type: kill_count
+    target: 50

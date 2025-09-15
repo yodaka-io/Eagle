@@ -24,6 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation(kotlin("stdlib"))
     implementation("net.kyori:adventure-api:4.8.1")
+    implementation("commons-io:commons-io:2.11.0")
     compileOnly("io.papermc.paper:paper-api:${mcVersion}-R0.1-SNAPSHOT")
 }
 

@@ -38,16 +38,22 @@ class EagleCommand(private val plugin: EaglePlugin) : CommandExecutor, TabComple
             plugin.messageManager.sendPlayerOnlyMessage(sender as Player)
             return
         }
-        
+
         // ゲーム中の場合は参加できない
         if (plugin.gameManager.isPlayerInGame(sender)) {
             sender.sendMessage("§c既にゲームに参加しています。")
             return
         }
-        
-        // ロビーに追加
-        plugin.lobbyManager.addPlayerToLobby(sender)
-        sender.sendMessage("§aロビーに参加しました！")
+
+        // 既にロビーにいる場合
+        if (plugin.lobbyManager.isInLobby(sender)) {
+            sender.sendMessage("§e既にロビーに参加しています。")
+            return
+        }
+
+        // ロビーに追加（テレポートはスキップ - プレイヤーは既に待機エリアにいる）
+        plugin.lobbyManager.addPlayerToLobby(sender, skipTeleport = true)
+        sender.sendMessage("§aゲーム待機に参加しました！最低${plugin.lobbyManager.getMinPlayers()}人でゲームが開始されます。")
     }
     
     private fun handleLeave(sender: CommandSender) {
@@ -66,8 +72,10 @@ class EagleCommand(private val plugin: EaglePlugin) : CommandExecutor, TabComple
         // ゲームから退出
         if (plugin.gameManager.isPlayerInGame(sender)) {
             plugin.teamManager.removePlayerFromTeam(sender)
-            plugin.lobbyManager.teleportToLobby(sender)
-            sender.sendMessage("§eゲームから退出しました。")
+
+            // 待機状態に戻す（テレポートは不要、既に同じマップにいる）
+            plugin.playerStateManager.setPlayerWaiting(sender)
+            sender.sendMessage("§eゲームから退出しました。観戦モードに戻りました。")
             return
         }
         

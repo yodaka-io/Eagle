@@ -31,6 +31,7 @@ team:
 game:
   started: "&aゲーム開始！"
   ended: "&eゲーム終了！"
+  countdown: "&e{time}秒でゲーム開始..."
   time-remaining: "&e残り時間: {time}"
   victory: "&a{team}チームの勝利！"
   defeat: "&c{team}チームの敗北..."
@@ -44,6 +45,8 @@ map:
   loaded: "&aマップ「{map}」が読み込まれました！"
   not-found: "&cマップ「{map}」が見つかりません。"
   next-map: "&e次のマップ: {map}"
+  transition: "&6次のマップ「{map}」に移行しています..."
+  rotation-complete: "&c&l全マップローテーションが完了しました！サーバーが再起動されます..."
 
 # スコアメッセージ
 score:

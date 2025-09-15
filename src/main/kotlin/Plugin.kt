@@ -10,6 +10,9 @@ import io.yodaka.eagle.message.MessageManager
 import io.yodaka.eagle.score.ScoreManager
 import io.yodaka.eagle.team.TeamManager
 import io.yodaka.eagle.ui.UIManager
+import io.yodaka.eagle.world.WorldManager
+import io.yodaka.eagle.player.PlayerStateManager
+import io.yodaka.eagle.protection.GameProtectionManager
 import org.bukkit.plugin.java.JavaPlugin
 
 class EaglePlugin : JavaPlugin() {
@@ -29,6 +32,12 @@ class EaglePlugin : JavaPlugin() {
     lateinit var scoreManager: ScoreManager
         private set
     lateinit var uiManager: UIManager
+        private set
+    lateinit var worldManager: WorldManager
+        private set
+    lateinit var playerStateManager: PlayerStateManager
+        private set
+    lateinit var gameProtectionManager: GameProtectionManager
         private set
     
     companion object {
@@ -63,6 +72,13 @@ class EaglePlugin : JavaPlugin() {
         if (::uiManager.isInitialized) {
             uiManager.stopGameUI()
         }
+        if (::worldManager.isInitialized) {
+            worldManager.unloadAllGameWorlds()
+            worldManager.cleanupTempWorlds()
+        }
+        if (::playerStateManager.isInitialized) {
+            playerStateManager.clearAll()
+        }
         logger.info("Eagle プラグインが無効になりました。")
     }
     
@@ -70,7 +86,16 @@ class EaglePlugin : JavaPlugin() {
         // 設定とメッセージマネージャーを最初に初期化
         configManager = ConfigManager(this)
         messageManager = MessageManager(this)
-        
+
+        // ワールド管理を早期に初期化
+        worldManager = WorldManager(this)
+
+        // プレイヤー状態管理を初期化
+        playerStateManager = PlayerStateManager(this)
+
+        // ゲーム保護システムを初期化
+        gameProtectionManager = GameProtectionManager(this)
+
         // 他のマネージャーを初期化
         teamManager = TeamManager(this)
         mapManager = MapManager(this)
@@ -91,7 +116,9 @@ class EaglePlugin : JavaPlugin() {
         pluginManager.registerEvents(teamManager, this)
         pluginManager.registerEvents(lobbyManager, this)
         pluginManager.registerEvents(scoreManager, this)
-        pluginManager.registerEvents(PlayerJoin(), this)
+        pluginManager.registerEvents(playerStateManager, this)
+        pluginManager.registerEvents(gameProtectionManager, this)
+        pluginManager.registerEvents(PlayerJoin(this), this)
         
         logger.info("イベントリスナーが登録されました。")
     }

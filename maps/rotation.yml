@@ -1,0 +1,14 @@
+# マップローテーション設定
+# 順番にプレイされるマップの設定
+
+rotation:
+  - pvp_map_03_type1
+
+# ローテーション設定
+settings:
+  # ローテーション完了後にサーバーを再起動するか
+  restart-after-rotation: true
+  # マップ切り替え時の待機時間（秒）
+  transition-time: 10
+  # 各マップの最大プレイ時間（秒、0で無制限）
+  max-playtime-per-map: 0

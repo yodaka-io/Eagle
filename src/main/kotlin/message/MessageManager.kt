@@ -46,7 +46,8 @@ class MessageManager(private val plugin: EaglePlugin) {
     
     fun sendMessage(player: Player, key: String, vararg placeholders: Pair<String, String>) {
         val message = prefix + getMessage(key, *placeholders)
-        player.sendMessage(getComponent("", "message" to message))
+        val component = LegacyComponentSerializer.legacyAmpersand().deserialize(message)
+        player.sendMessage(component)
     }
     
     fun sendMessageWithoutPrefix(player: Player, key: String, vararg placeholders: Pair<String, String>) {

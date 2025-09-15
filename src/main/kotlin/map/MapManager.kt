@@ -23,85 +23,21 @@ class MapManager(private val plugin: EaglePlugin) {
         
         // マップローテーションの読み込み
         mapRotation.addAll(configManager.getMapRotation())
-        
-        // サンプルマップ設定ファイルの作成
-        createSampleMapConfigs()
-    }
-    
-    private fun createSampleMapConfigs() {
-        val sampleMaps = listOf("castle_wars", "bridge_battle", "capture_point")
-        
-        sampleMaps.forEach { mapId ->
-            val mapConfigFile = File(mapsDirectory, "$mapId.yml")
-            if (!mapConfigFile.exists()) {
-                createSampleMapConfig(mapConfigFile, mapId)
-            }
-        }
-    }
-    
-    private fun createSampleMapConfig(file: File, mapId: String) {
-        val config = YamlConfiguration()
-        
-        config.set("id", mapId)
-        config.set("name", mapId.replace("_", " ").split(" ").joinToString(" ") { 
-            it.replaceFirstChar { char -> char.uppercase() } 
-        })
-        config.set("world-name", mapId)
-        config.set("time-limit", 1800)
-        
-        // サンプルスポーンポイント
-        config.set("spawn-points.red.0.x", 100.0)
-        config.set("spawn-points.red.0.y", 64.0)
-        config.set("spawn-points.red.0.z", -30.0)
-        config.set("spawn-points.red.0.yaw", 0.0)
-        config.set("spawn-points.red.0.pitch", 0.0)
-        
-        config.set("spawn-points.blue.0.x", -100.0)
-        config.set("spawn-points.blue.0.y", 64.0)
-        config.set("spawn-points.blue.0.z", 30.0)
-        config.set("spawn-points.blue.0.yaw", 180.0)
-        config.set("spawn-points.blue.0.pitch", 0.0)
-        
-        // サンプル勝利条件
-        when (mapId) {
-            "castle_wars" -> {
-                config.set("objectives.0.type", "capture_flag")
-                config.set("objectives.0.team", "red")
-                config.set("objectives.0.location.x", 100.0)
-                config.set("objectives.0.location.y", 65.0)
-                config.set("objectives.0.location.z", -30.0)
-            }
-            "bridge_battle" -> {
-                config.set("objectives.0.type", "kill_count")
-                config.set("objectives.0.target", 50)
-            }
-            "capture_point" -> {
-                config.set("objectives.0.type", "control_point")
-                config.set("objectives.0.location.x", 0.0)
-                config.set("objectives.0.location.y", 64.0)
-                config.set("objectives.0.location.z", 0.0)
-                config.set("objectives.0.radius", 5.0)
-            }
-        }
-        
-        try {
-            config.save(file)
-            plugin.logger.info("サンプルマップ設定ファイルを作成しました: ${file.name}")
-        } catch (e: Exception) {
-            plugin.logger.warning("マップ設定ファイルの作成に失敗しました: ${e.message}")
-        }
     }
     
     fun loadMap(mapId: String): MapConfig? {
-        val mapConfigFile = File(mapsDirectory, "$mapId.yml")
+        val mapDirectory = File(mapsDirectory, mapId)
+        val mapConfigFile = File(mapDirectory, "map.yml")
         if (!mapConfigFile.exists()) {
-            plugin.logger.warning("マップ設定ファイルが見つかりません: $mapId")
+            plugin.logger.warning("マップ設定ファイルが見つかりません: $mapId/map.yml")
             return null
         }
         
         try {
             val config = YamlConfiguration.loadConfiguration(mapConfigFile)
-            return MapConfig.fromYaml(config)
+            val parsed = MapConfig.fromYaml(config)
+            // 物理マップフォルダ（ローテーションのID）をdirIdとして付与
+            return parsed.copy(dirId = mapId)
         } catch (e: Exception) {
             plugin.logger.severe("マップ設定の読み込みに失敗しました: $mapId - ${e.message}")
             return null
@@ -112,20 +48,20 @@ class MapManager(private val plugin: EaglePlugin) {
         try {
             // 既存のゲームワールドをアンロード
             unloadCurrentGameWorld()
-            
+
             plugin.messageManager.sendMapLoadingMessage(mapConfig.name)
-            
-            // 新しいワールドをロード
-            val worldCreator = WorldCreator.name(mapConfig.worldName)
-            val world = Bukkit.createWorld(worldCreator)
-            
+
+            // WorldManagerを使用して非同期でワールドを読み込み
+            val future = plugin.worldManager.loadGameWorldAsync(mapConfig)
+            val world = future.get() // 同期的に待機（後で非同期版も提供可能）
+
             if (world != null) {
                 currentGameWorld = world
                 plugin.messageManager.sendMapLoadedMessage(mapConfig.name)
                 plugin.logger.info("マップ「${mapConfig.name}」を読み込みました")
                 return world
             } else {
-                plugin.logger.severe("ワールド「${mapConfig.worldName}」の作成に失敗しました")
+                plugin.logger.severe("ワールドの読み込みに失敗しました: ${mapConfig.id}")
                 return null
             }
         } catch (e: Exception) {
@@ -133,18 +69,15 @@ class MapManager(private val plugin: EaglePlugin) {
             return null
         }
     }
+
     
     fun unloadCurrentGameWorld() {
-        currentGameWorld?.let { world ->
-            // プレイヤーをロビーに移動
-            world.players.forEach { player ->
-                plugin.lobbyManager.teleportToLobby(player)
-            }
-            
-            // ワールドをアンロード
-            Bukkit.unloadWorld(world, false)
-            currentGameWorld = null
+        val currentMapId = getCurrentMap()
+        if (currentMapId != null) {
+            // WorldManagerを使用してワールドをアンロード
+            plugin.worldManager.unloadGameWorld(currentMapId)
         }
+        currentGameWorld = null
     }
     
     fun getCurrentMap(): String? {
@@ -159,7 +92,23 @@ class MapManager(private val plugin: EaglePlugin) {
     
     fun rotateToNextMap(): String? {
         if (mapRotation.isEmpty()) return null
+
+        // マップが1つしかない場合は同じマップを繰り返す（サーバー再起動しない）
+        if (mapRotation.size == 1) {
+            plugin.logger.info("マップローテーションに1つのマップのみ存在します。同じマップを継続します。")
+            return mapRotation[0]
+        }
+
+        val oldIndex = currentMapIndex
         currentMapIndex = (currentMapIndex + 1) % mapRotation.size
+
+        // ローテーション完了をチェック（最初のマップに戻った場合）
+        if (currentMapIndex == 0 && oldIndex != 0) {
+            plugin.logger.info("マップローテーションが完了しました。サーバーを再起動します。")
+            // ローテーション完了のシグナルとしてnullを返す
+            return null
+        }
+
         return mapRotation[currentMapIndex]
     }
     
@@ -185,26 +134,124 @@ class MapManager(private val plugin: EaglePlugin) {
         }
     }
     
-    fun getCurrentGameWorld(): World? = currentGameWorld
+    fun getCurrentGameWorld(): World? {
+        val currentMapId = getCurrentMap()
+        return if (currentMapId != null) {
+            plugin.worldManager.getActiveGameWorld(currentMapId)
+        } else {
+            currentGameWorld
+        }
+    }
+
+    /**
+     * 非同期でゲームワールドを読み込む
+     */
+    fun loadGameWorldAsync(mapConfig: MapConfig, callback: (World?) -> Unit) {
+        // 古いワールドの参照を保存（後でアンロードする）
+        val oldGameWorld = currentGameWorld
+
+        plugin.messageManager.sendMapLoadingMessage(mapConfig.name)
+
+        plugin.worldManager.loadGameWorldAsync(mapConfig).thenAccept { world ->
+            if (world != null) {
+                currentGameWorld = world
+                plugin.messageManager.sendMapLoadedMessage(mapConfig.name)
+                plugin.logger.info("マップ「${mapConfig.name}」を読み込みました")
+
+                // 新しいワールドが準備できた後に、古いワールドをアンロード
+                if (oldGameWorld != null && oldGameWorld != world) {
+                    Bukkit.getScheduler().runTaskLater(plugin, Runnable {
+                        unloadSpecificGameWorld(oldGameWorld)
+                    }, 20L) // 1秒後にアンロード
+                }
+
+                // 以降の処理（テレポート等）は必ずメインスレッドで実行
+                Bukkit.getScheduler().runTask(plugin, Runnable {
+                    callback(world)
+                })
+            } else {
+                plugin.logger.severe("ワールドの読み込みに失敗しました: ${mapConfig.id}")
+                Bukkit.getScheduler().runTask(plugin, Runnable {
+                    callback(null)
+                })
+            }
+        }
+    }
     
+    /**
+     * 特定のワールドをプレイヤーの移動なしでアンロード
+     */
+    private fun unloadSpecificGameWorld(world: World) {
+        try {
+            // プレイヤーがまだそのワールドにいる場合は移動しない（既に新しいワールドにいるはず）
+            val playersInWorld = world.players.toList()
+            if (playersInWorld.isNotEmpty()) {
+                plugin.logger.info("ワールド ${world.name} に ${playersInWorld.size} 人のプレイヤーがいるためアンロードをスキップします")
+                return
+            }
+
+            // ワールドをアンロード
+            val worldName = world.name
+            Bukkit.unloadWorld(world, false)
+            plugin.logger.info("古いゲームワールドをアンロードしました: $worldName")
+
+            // WorldManagerの追跡からも除外
+            plugin.worldManager.untrackWorld(world)
+        } catch (e: Exception) {
+            plugin.logger.severe("ワールドのアンロード中にエラーが発生しました: ${e.message}")
+        }
+    }
+
     fun isMapAvailable(mapId: String): Boolean {
-        val mapConfigFile = File(mapsDirectory, "$mapId.yml")
-        return mapConfigFile.exists()
+        return plugin.worldManager.isMapAvailable(mapId)
     }
     
     fun initializeMapRotation() {
         if (mapRotation.isEmpty()) {
-            plugin.logger.warning("マップローテーションが空です。デフォルトマップを追加します。")
-            mapRotation.addAll(listOf("castle_wars", "bridge_battle", "capture_point"))
+            plugin.logger.warning("マップローテーションが空です。利用可能なマップを検索します。")
+            val availableMaps = plugin.worldManager.getAvailableMaps()
+            if (availableMaps.isNotEmpty()) {
+                mapRotation.addAll(availableMaps)
+                plugin.logger.info("利用可能なマップを自動追加しました: ${availableMaps.joinToString(", ")}")
+            } else {
+                plugin.logger.severe("利用可能なマップが見つかりません。mapsディレクトリを確認してください。")
+                return
+            }
         }
-        
+
+        // 利用可能でないマップをローテーションから除外
+        val unavailableMaps = mapRotation.filter { !isMapAvailable(it) }
+        if (unavailableMaps.isNotEmpty()) {
+            plugin.logger.warning("以下のマップが利用できないためローテーションから除外します: ${unavailableMaps.joinToString(", ")}")
+            mapRotation.removeAll(unavailableMaps)
+        }
+
+        // 利用可能なマップがない場合
+        if (mapRotation.isEmpty()) {
+            plugin.logger.severe("利用可能なマップがありません。サーバーを停止します。")
+            plugin.server.shutdown()
+            return
+        }
+
+        // 現在のマップインデックスを調整
+        if (currentMapIndex >= mapRotation.size) {
+            currentMapIndex = 0
+        }
+
         // 現在のマップが有効かチェック
         val currentMap = getCurrentMap()
         if (currentMap != null && !isMapAvailable(currentMap)) {
             plugin.logger.warning("現在のマップ「$currentMap」が利用できません。次のマップに移行します。")
             rotateToNextMap()
         }
-        
+
         plugin.logger.info("マップローテーションが初期化されました: ${mapRotation.joinToString(", ")}")
+
+        if (mapRotation.isNotEmpty()) {
+            val currentMapName = getCurrentMap()
+            if (currentMapName != null) {
+                plugin.logger.info("現在のマップ: $currentMapName")
+            }
+        }
     }
 } 

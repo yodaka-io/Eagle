@@ -1,0 +1,50 @@
+id: castle_wars
+name: Castle Wars
+world-name: castle_wars_game
+time-limit: 1800
+
+# 待機エリアの設定
+waiting-area:
+  x: 0.0
+  y: 100.0
+  z: 0.0
+  yaw: 0.0
+  pitch: 0.0
+
+# ゲーム境界の設定
+game-boundary:
+  min:
+    x: -50.0
+    y: 0.0
+    z: -50.0
+  max:
+    x: 150.0
+    y: 100.0
+    z: 50.0
+
+# チームスポーンポイント
+spawn-points:
+  red:
+    0:
+      x: 100.0
+      y: 64.0
+      z: -30.0
+      yaw: 0.0
+      pitch: 0.0
+  blue:
+    0:
+      x: -100.0
+      y: 64.0
+      z: 30.0
+      yaw: 180.0
+      pitch: 0.0
+
+# 勝利条件
+objectives:
+  0:
+    type: capture_flag
+    team: red
+    location:
+      x: 100.0
+      y: 65.0
+      z: -30.0

@@ -22,20 +22,15 @@ class ConfigManager(private val plugin: EaglePlugin) {
     val mapSettings: ConfigurationSection
         get() = config.getConfigurationSection("maps") ?: config.createSection("maps")
     
-    // ロビー設定
-    fun getMinPlayers(): Int = config.getInt("lobby.min-players", 4)
-    fun getMaxPlayers(): Int = config.getInt("lobby.max-players", 16)
+    // ロビー設定（デフォルト値、マップ設定で上書き可能）
+    fun getMinPlayers(): Int = config.getInt("lobby.default-min-players", 2)
+    fun getMaxPlayers(): Int = config.getInt("lobby.default-max-players", 16)
     fun getCountdownTime(): Int = config.getInt("lobby.countdown-time", 10)
-    fun getLobbyWorldName(): String = config.getString("lobby.world-name", "lobby") ?: "lobby"
-    
+
     fun getLobbySpawnPoint(): Location? {
-        val world = plugin.server.getWorld(getLobbyWorldName()) ?: return null
-        val x = config.getDouble("lobby.spawn-point.x", 0.0)
-        val y = config.getDouble("lobby.spawn-point.y", 64.0)
-        val z = config.getDouble("lobby.spawn-point.z", 0.0)
-        val yaw = config.getDouble("lobby.spawn-point.yaw", 0.0).toFloat()
-        val pitch = config.getDouble("lobby.spawn-point.pitch", 0.0).toFloat()
-        return Location(world, x, y, z, yaw, pitch)
+        // ロビーワールドは現在使用していないため、nullを返す
+        // プレイヤーは直接マップの待機エリアに配置される
+        return null
     }
     
     // チーム設定

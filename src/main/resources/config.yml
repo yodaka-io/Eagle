@@ -3,21 +3,12 @@
 
 # ロビー設定
 lobby:
-  # ゲーム開始に必要な最小プレイヤー数
-  min-players: 4
-  # ゲーム開始に必要な最大プレイヤー数
-  max-players: 16
+  # デフォルトの最小プレイヤー数（マップ設定で上書き可能）
+  default-min-players: 2
+  # デフォルトの最大プレイヤー数（マップ設定で上書き可能）
+  default-max-players: 16
   # ゲーム開始までの待機時間（秒）
   countdown-time: 10
-  # ロビーワールド名
-  world-name: "lobby"
-  # ロビーのスポーン地点
-  spawn-point:
-    x: 0.0
-    y: 64.0
-    z: 0.0
-    yaw: 0.0
-    pitch: 0.0
 
 # チーム設定
 teams:
@@ -34,12 +25,12 @@ teams:
 maps:
   # 使用するマップのリスト
   rotation:
-    - "castle_wars"
-    - "bridge_battle"
-    - "capture_point"
+    - "pvp_map_03_type1"
+    - "pvp_map_03_type2"
+    - "pvp_map_03_type3"
 
-  # マップファイルのディレクトリ
-  maps-directory: "plugins/Eagle/maps"
+  # マップファイルのディレクトリ（サーバーフォルダ内）
+  maps-directory: "maps"
 
 # ゲーム設定
 game:
